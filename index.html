@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sorpresa Pokémon 🎉</title>
+
+    <!-- Fuentes (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Luckiest+Guy&family=Nunito:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --yellow: #FFCB05;
+            --yellow2: #FFE06A;
+            --blue: #2A75BB;
+            --blue2: #1D4E89;
+
+            --red: #FF1F1F;
+            --red2: #C70000;
+
+            --ink: #0b1020;
+            --text: #f7fbff;
+            --muted: rgba(247, 251, 255, .82);
+
+            --glass: rgba(12, 20, 40, .55);
+            --glassBorder: rgba(255, 255, 255, .14);
+
+            --shadow: 0 22px 70px rgba(0, 0, 0, .45);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            font-family: "Nunito", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background:
+                /* overlay para legibilidad */
+                linear-gradient(180deg, rgba(5, 10, 20, .62), rgba(5, 10, 20, .40)),
+                url("./background-hero.png");
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        /* Layout */
+        .page {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px 16px 18px;
+            gap: 18px;
+        }
+
+        .wrap {
+            width: min(980px, 100%);
+            display: grid;
+            gap: 16px;
+            justify-items: center;
+        }
+
+        /* Header */
+        .hero {
+            width: min(920px, 100%);
+            text-align: center;
+            padding: 18px 16px;
+            border-radius: 20px;
+            background: var(--glass);
+            border: 1px solid var(--glassBorder);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+            backdrop-filter: blur(10px);
+        }
+
+        .kicker {
+            margin: 0 0 10px;
+            font-family: "Press Start 2P", monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--yellow2);
+            text-shadow: 0 2px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* Título estilo Pokémon: relleno amarillo + borde azul */
+        .title {
+            margin: 0;
+            font-family: "Luckiest Guy", cursive;
+            font-size: clamp(34px, 4.6vw, 60px);
+            letter-spacing: .5px;
+            color: var(--yellow);
+            -webkit-text-stroke: 8px var(--blue);
+            paint-order: stroke fill;
+            text-shadow:
+                0 10px 30px rgba(0, 0, 0, .35),
+                0 3px 0 rgba(0, 0, 0, .25);
+        }
+
+        .subtitle {
+            margin: 10px 0 0;
+            font-weight: 800;
+            color: var(--muted);
+        }
+
+        /* Stage */
+        .stage {
+            width: min(980px, 100%);
+            display: grid;
+            grid-template-columns: 1fr;
+            justify-items: center;
+            gap: 14px;
+            padding: 14px 0 0;
+        }
+
+        /* Pokébola */
+        .pokeball {
+            width: min(280px, 70vw);
+            aspect-ratio: 1/1;
+            position: relative;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+            filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .45));
+            transition: transform .16s ease;
+            outline: none;
+        }
+
+        .pokeball:hover {
+            transform: translateY(-2px);
+        }
+
+        .pokeball:active {
+            transform: translateY(0px) scale(.99);
+        }
+
+        .pokeball:focus-visible {
+            outline: 4px solid rgba(255, 203, 5, .55);
+            outline-offset: 10px;
+            border-radius: 999px;
+        }
+
+        .pokeball__top,
+        .pokeball__bottom {
+            position: absolute;
+            inset: 0;
+            border-radius: 999px;
+            border: 10px solid #0c0f16;
+        }
+
+        .pokeball__top {
+            background:
+                radial-gradient(120% 120% at 30% 25%, rgba(255, 255, 255, .40) 0%, transparent 35%),
+                linear-gradient(180deg, var(--red), var(--red2));
+            clip-path: inset(0 0 50% 0 round 999px);
+        }
+
+        .pokeball__bottom {
+            background:
+                radial-gradient(120% 120% at 30% 25%, rgba(255, 255, 255, .9) 0%, rgba(235, 240, 255, .9) 60%, rgba(205, 215, 240, .9) 100%);
+            clip-path: inset(50% 0 0 0 round 999px);
+        }
+
+        .pokeball__band {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 22px;
+            transform: translateY(-50%);
+            background: linear-gradient(180deg, #161a22, #05060a);
+            box-shadow: 0 2px 0 rgba(255, 255, 255, .08) inset;
+        }
+
+        .pokeball__button {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 82px;
+            height: 82px;
+            border-radius: 999px;
+            background:
+                radial-gradient(circle at 30% 30%, #ffffff 0%, #e8eeff 60%, #cfd8f2 100%);
+            border: 12px solid #0c0f16;
+            box-shadow:
+                0 18px 28px rgba(0, 0, 0, .35),
+                0 0 0 10px rgba(255, 255, 255, .10),
+                0 0 28px rgba(255, 203, 5, .35);
+            animation: buttonGlow 1.6s ease-in-out infinite;
+        }
+
+        @keyframes buttonGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 18px 28px rgba(0, 0, 0, .35), 0 0 0 10px rgba(255, 255, 255, .10), 0 0 18px rgba(255, 203, 5, .25);
+            }
+
+            50% {
+                box-shadow: 0 18px 28px rgba(0, 0, 0, .35), 0 0 0 10px rgba(255, 255, 255, .10), 0 0 36px rgba(255, 203, 5, .55);
+            }
+        }
+
+        /* “Abre” la tapa superior */
+        .pokeball.is-open .pokeball__top {
+            animation: openTop .55s cubic-bezier(.2, .9, .2, 1) forwards;
+        }
+
+        @keyframes openTop {
+            to {
+                transform: translateY(-18%);
+            }
+        }
+
+        /* Card estilo Pokémon TCG */
+        .card {
+            width: min(720px, 96%);
+            border-radius: var(--radius);
+            padding: 16px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .86));
+            border: 6px solid var(--yellow);
+            box-shadow: var(--shadow);
+            color: #0f1424;
+            position: relative;
+            overflow: hidden;
+            animation: pop .22s ease-out;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -140px -140px auto auto;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(42, 117, 187, .25), transparent 70%);
+            pointer-events: none;
+        }
+
+        @keyframes pop {
+            from {
+                transform: translateY(10px) scale(.985);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .card__top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card__badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 999px;
+            font-weight: 900;
+            background: linear-gradient(180deg, var(--yellow2), var(--yellow));
+            border: 3px solid #0c0f16;
+            color: #0c0f16;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            font-size: 12px;
+        }
+
+        .card__pill {
+            font-family: "Press Start 2P", monospace;
+            font-size: 10px;
+            color: rgba(15, 20, 36, .7);
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px dashed rgba(15, 20, 36, .35);
+            background: rgba(255, 255, 255, .55);
+            white-space: nowrap;
+        }
+
+        .card__title {
+            margin: 8px 0 6px;
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: .2px;
+        }
+
+        .card__msg {
+            margin: 0 0 14px;
+            color: rgba(15, 20, 36, .82);
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 700;
+        }
+
+        .card__media {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 4px solid #0c0f16;
+            background: rgba(0, 0, 0, .08);
+        }
+
+        .card__media img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 340px;
+            object-fit: cover;
+        }
+
+        .card__actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 3px solid #0c0f16;
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-weight: 900;
+            cursor: pointer;
+            background: linear-gradient(180deg, var(--yellow2), var(--yellow));
+            transition: transform .12s ease, filter .12s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.02);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn--ghost {
+            background: rgba(255, 255, 255, .75);
+        }
+
+        .footer {
+            margin-top: auto;
+            padding: 10px 0 0;
+            color: rgba(255, 255, 255, .75);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, .25);
+            font-weight: 700;
+        }
+
+        @media (max-width: 420px) {
+            .card__title {
+                font-size: 22px;
+            }
+
+            .card__actions {
+                justify-content: stretch;
+            }
+
+            .btn {
+                flex: 1;
+            }
+        }
+
+        /* ==============================
+   Intro Video estilo Pokémon
+   ============================== */
+
+.intro-video{
+    width: min(720px, 95%);
+    display:flex;
+    justify-content:center;
+    margin-bottom: 18px;
+    transition: opacity .4s ease, transform .4s ease;
+}
+
+.intro-video.hidden{
+    opacity:0;
+    transform: translateY(-10px);
+    pointer-events:none;
+}
+
+/* Marco estilo carta */
+.intro-video__frame{
+    width:100%;
+    border-radius: 24px;
+    padding: 14px;
+    background: linear-gradient(180deg, #ff2a2a, #b30000);
+    border: 6px solid #0c0f16;
+    box-shadow: 0 26px 80px rgba(0,0,0,.55);
+    position:relative;
+}
+
+/* efecto decorativo tipo Pokédex */
+.intro-video__frame::before{
+    content:"";
+    position:absolute;
+    inset: 8px;
+    border-radius: 16px;
+    border: 4px solid var(--yellow);
+    pointer-events:none;
+}
+
+/* El video en sí */
+.intro-video video{
+    width:100%;
+    display:block;
+    border-radius: 16px;
+    border: 4px solid #0c0f16;
+    background:black;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <main class="page">
+        <div class="wrap">
+
+            <div class="intro-video" id="introVideo">
+                <div class="intro-video__frame">
+                    <video id="pokemonVideo" src="../pokemon.mp4" autoplay muted loop playsinline></video>
+                </div>
+            </div>
+
+            <header class="hero">
+                <p class="kicker">¿QUIÉN ES ESE POKÉMON?</p>
+                <h1 class="title">¡HUGO!</h1>
+                <p class="subtitle">Toca la Pokébola para abrir la carta.</p>
+            </header>
+
+            <section class="stage" aria-label="Pokébola interactiva">
+                <button class="pokeball" id="pokeball" aria-expanded="false" aria-controls="card">
+                    <span class="pokeball__top" aria-hidden="true"></span>
+                    <span class="pokeball__band" aria-hidden="true"></span>
+                    <span class="pokeball__bottom" aria-hidden="true"></span>
+                    <span class="pokeball__button" aria-hidden="true"></span>
+                </button>
+
+                <article class="card" id="card" hidden>
+                    <div class="card__top">
+                        <div class="card__badge" id="pokemonName">¡Feliz cumpleaños, tío 🎂!</div>
+                        <div class="card__pill">LV. 39 ✨</div>
+                    </div>
+
+                    <h2 class="card__title" id="headline"></h2>
+
+                    <p class="card__msg" id="message">
+                        Eres una persona maravillosa, siempre dispuesto a ayudar, a sonreir y a llenar de alegría a todos los que te rodean.
+                    </p>
+
+                    <div class="card__media">
+                        <img id="photo" src="./dibujo.jpg" alt="Foto del cumpleañero" />
+                    </div>
+
+                    <div class="card__actions">
+                        <button class="btn btn--ghost" id="closeBtn" type="button">Cerrar</button>
+                        <button class="btn" id="confettiBtn" type="button">Celebrar 🎊</button>
+                    </div>
+                </article>
+            </section>
+
+            <footer class="footer">
+                <small>Hecho con cariño por:</small>
+                <small>
+                        Aelin, Gerardo, Gina y Juan Carlos
+                </small>
+
+            </footer>
+        </div>
+    </main>
+
+    <script>
+        const pokeball = document.getElementById("pokeball");
+        const card = document.getElementById("card");
+        const closeBtn = document.getElementById("closeBtn");
+        const confettiBtn = document.getElementById("confettiBtn");
+
+        function openCard() {
+            pokeball.classList.add("is-open");
+            pokeball.setAttribute("aria-expanded", "true");
+            card.hidden = false;
+            card.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        function closeCard() {
+            pokeball.classList.remove("is-open");
+            pokeball.setAttribute("aria-expanded", "false");
+            card.hidden = true;
+        }
+
+        function celebrate() {
+            const burstCount = 90;
+            for (let i = 0; i < burstCount; i++) {
+                const p = document.createElement("span");
+                p.style.position = "fixed";
+                p.style.left = Math.random() * 100 + "vw";
+                p.style.top = "-10px";
+                p.style.width = "8px";
+                p.style.height = "14px";
+                p.style.opacity = "0.95";
+                p.style.borderRadius = "2px";
+                p.style.background = `hsl(${Math.random() * 360}, 90%, 60%)`;
+                p.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+                const fall = 1100 + Math.random() * 1400;
+                const drift = (Math.random() - 0.5) * 260;
+
+                p.animate(
+                    [
+                        { transform: p.style.transform, top: "-10px", left: p.style.left },
+                        { transform: `rotate(${Math.random() * 720}deg)`, top: "110vh", left: `calc(${p.style.left} + ${drift}px)` },
+                    ],
+                    { duration: fall, easing: "cubic-bezier(.2,.7,.2,1)", fill: "forwards" }
+                );
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), fall + 120);
+            }
+        }
+
+        pokeball.addEventListener("click", () => {
+            const isOpen = pokeball.classList.contains("is-open");
+            if (isOpen) closeCard();
+            else openCard();
+        });
+
+        closeBtn.addEventListener("click", closeCard);
+        confettiBtn.addEventListener("click", celebrate);
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !card.hidden) closeCard();
+        });
+    </script>
+</body>
+
+</html>
