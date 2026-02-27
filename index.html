@@ -384,50 +384,49 @@
    Intro Video estilo Pokémon
    ============================== */
 
-.intro-video{
-    width: min(720px, 95%);
-    display:flex;
-    justify-content:center;
-    margin-bottom: 18px;
-    transition: opacity .4s ease, transform .4s ease;
-}
+        .intro-video {
+            width: min(720px, 95%);
+            display: flex;
+            justify-content: center;
+            margin-bottom: 18px;
+            transition: opacity .4s ease, transform .4s ease;
+        }
 
-.intro-video.hidden{
-    opacity:0;
-    transform: translateY(-10px);
-    pointer-events:none;
-}
+        .intro-video.hidden {
+            opacity: 0;
+            transform: translateY(-10px);
+            pointer-events: none;
+        }
 
-/* Marco estilo carta */
-.intro-video__frame{
-    width:100%;
-    border-radius: 24px;
-    padding: 14px;
-    background: linear-gradient(180deg, #ff2a2a, #b30000);
-    border: 6px solid #0c0f16;
-    box-shadow: 0 26px 80px rgba(0,0,0,.55);
-    position:relative;
-}
+        /* Marco estilo carta */
+        .intro-video__frame {
+            width: 100%;
+            border-radius: 24px;
+            padding: 14px;
+            background: linear-gradient(180deg, #ff2a2a, #b30000);
+            border: 6px solid #0c0f16;
+            box-shadow: 0 26px 80px rgba(0, 0, 0, .55);
+            position: relative;
+        }
 
-/* efecto decorativo tipo Pokédex */
-.intro-video__frame::before{
-    content:"";
-    position:absolute;
-    inset: 8px;
-    border-radius: 16px;
-    border: 4px solid var(--yellow);
-    pointer-events:none;
-}
+        /* efecto decorativo tipo Pokédex */
+        .intro-video__frame::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border-radius: 16px;
+            border: 4px solid var(--yellow);
+            pointer-events: none;
+        }
 
-/* El video en sí */
-.intro-video video{
-    width:100%;
-    display:block;
-    border-radius: 16px;
-    border: 4px solid #0c0f16;
-    background:black;
-}
-
+        /* El video en sí */
+        .intro-video video {
+            width: 100%;
+            display: block;
+            border-radius: 16px;
+            border: 4px solid #0c0f16;
+            background: black;
+        }
     </style>
 </head>
 
@@ -435,7 +434,8 @@
 
     <main class="page">
         <div class="wrap">
-
+            <audio id="introAudio" src="audioPokemon.mp3" preload="auto"></audio>
+            <audio id="bgMusic" src="pokemonMusic.ogg" loop></audio>
             <div class="intro-video" id="introVideo">
                 <div class="intro-video__frame">
                     <video id="pokemonVideo" src="pokemon.mp4" autoplay muted loop playsinline></video>
@@ -443,8 +443,8 @@
             </div>
 
             <header class="hero">
-                <p class="kicker">¿QUIÉN ES ESE POKÉMON?</p>
-                <h1 class="title">¡HUGO!</h1>
+                <p class="kicker">¿QUIÉN ES ESE POKÉMON?</p><br>
+                <h1 class="title">¡HUGO!</h1><br>
                 <p class="subtitle">Toca la Pokébola para abrir la carta.</p>
             </header>
 
@@ -465,7 +465,8 @@
                     <h2 class="card__title" id="headline"></h2>
 
                     <p class="card__msg" id="message">
-                        Eres una persona maravillosa, siempre dispuesto a ayudar, a sonreir y a llenar de alegría a todos los que te rodean.
+                        Eres una persona maravillosa, siempre dispuesto a ayudar, a sonreir y a llenar de alegría a
+                        todos los que te rodean.
                     </p>
 
                     <div class="card__media">
@@ -482,7 +483,7 @@
             <footer class="footer">
                 <small>Hecho con cariño por:</small>
                 <small>
-                        Aelin, Gerardo, Gina y Juan Carlos
+                    Aelin, Gerardo, Gina y Juan Carlos
                 </small>
 
             </footer>
@@ -495,6 +496,11 @@
         const closeBtn = document.getElementById("closeBtn");
         const confettiBtn = document.getElementById("confettiBtn");
 
+        const introAudio = document.getElementById("introAudio");
+        const bgMusic = document.getElementById("bgMusic");
+
+        let introPlayed = false;
+
         function openCard() {
             pokeball.classList.add("is-open");
             pokeball.setAttribute("aria-expanded", "true");
@@ -506,6 +512,13 @@
             pokeball.classList.remove("is-open");
             pokeball.setAttribute("aria-expanded", "false");
             card.hidden = true;
+        }
+
+        function startMusic() {
+            if (bgMusic.paused) {
+                bgMusic.volume = 0.4;
+                bgMusic.play().catch(() => { });
+            }
         }
 
         function celebrate() {
@@ -540,8 +553,23 @@
 
         pokeball.addEventListener("click", () => {
             const isOpen = pokeball.classList.contains("is-open");
-            if (isOpen) closeCard();
-            else openCard();
+
+            if (isOpen) {
+                closeCard();
+            } else {
+                openCard();
+
+                // 🎵 Audio de introducción (solo una vez)
+                if (!introPlayed) {
+                    introAudio.currentTime = 0;
+                    introAudio.volume = 0.8;
+                    introAudio.play().catch(() => { });
+                    introPlayed = true;
+                }
+
+                // 🎶 Música de fondo
+                startMusic();
+            }
         });
 
         closeBtn.addEventListener("click", closeCard);
@@ -551,6 +579,8 @@
             if (e.key === "Escape" && !card.hidden) closeCard();
         });
     </script>
+
+
 </body>
 
 </html>
